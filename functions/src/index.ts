@@ -37,6 +37,7 @@ export const onRtWrite = onValueWritten("/sensors", async (event) => {
   logger.log(event);
 
   const newWindSpeed = event.data.after.val().wind_speed;
+  const newTimestamp = event.data.after.val().timestamp;
 
   logger.log(newWindSpeed);
 
@@ -44,8 +45,8 @@ export const onRtWrite = onValueWritten("/sensors", async (event) => {
 
   try {
     await dbClient.query(
-      `insert into wind_speed (value, timestamp, location)
-      values (${newWindSpeed}, NOW(), 'Boston')`);
+      `insert into wind_speed (value, timestamp, server_timestamp, location)
+      values (${newWindSpeed}, '${newTimestamp}', NOW(), 'Boston')`);
   } catch (e) {
     logger.error(`ERROR writing to database: ${e}`);
   } finally {
